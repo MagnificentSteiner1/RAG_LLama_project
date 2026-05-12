@@ -1,0 +1,28 @@
+# Core API
+fastapi
+uvicorn[standard]
+pydantic
+
+# RAG framework
+langchain
+langchain-core
+langchain-community
+langchain-chroma
+langchain-text-splitters
+
+# Vector DB
+chromadb
+
+# Embeddings + LLM (Ollama integration)
+langchain-ollama
+ollama
+
+# Data handling
+numpy
+pandas
+
+# File handling
+python-multipart
+
+# Optional but commonly needed
+tqdm
