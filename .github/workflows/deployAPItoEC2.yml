@@ -29,5 +29,5 @@ jobs:
             cd ~/RAG_LLama_project
             git pull origin main
 
-            docker compose build api
-            docker compose up -d api
+            docker-compose build api
+            docker-compose up -d api
