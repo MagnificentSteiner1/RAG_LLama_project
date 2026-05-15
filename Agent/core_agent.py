@@ -6,11 +6,13 @@ from langchain_core.prompts import ChatPromptTemplate
 db_location = Path(__file__).resolve().parent.parent / "Database"
 
 embeddings = OllamaEmbeddings(
-    model="mxbai-embed-large"
+    model="mxbai-embed-large",
+    base_url="http://ollama:11434"
 )
 
 model = OllamaLLM(
-    model="llama3.2"
+    model="llama3.2",
+    base_url="http://ollama:11434"
 )
 
 vector_store = Chroma(

@@ -20,7 +20,10 @@ def AskQuestion(question: str):
         "question": question,
         "context": context
     })
-
+    print(question)
+    print("TOP DOC SAMPLE:")
+    for i, doc in enumerate(retrieved_docs[:3]):
+        print(i, doc.page_content[:300])
     return {
         "answer":result,
         "context":[doc.page_content for doc in retrieved_docs]

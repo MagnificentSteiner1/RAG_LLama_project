@@ -36,7 +36,7 @@ def build_documents(paper):
 
     return docs
 
-def ingest_document(paper: dict):
+def ingest_document(paper: dict, source : str):
 
     docs = build_documents(paper)
 
@@ -46,5 +46,6 @@ def ingest_document(paper: dict):
 
     return {
         "status": "success",
-        "chunks_added": len(split_docs)
+        "chunks_added": len(split_docs),
+        "source": source
     }

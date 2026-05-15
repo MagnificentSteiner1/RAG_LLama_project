@@ -10,16 +10,18 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 data_path = BASE_DIR / "Documents/pdf jsons"
 
-db_location = Path(__file__).resolve().parent.parent / "Database"
-chroma_data_file = db_location / "chroma.sqlite3"
-add_documents = not chroma_data_file.exists()
-embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+db_location = "/app/Database"
+chroma_data_file = Path(db_location) / "chroma.sqlite3"
+add_documents = True
+embeddings = OllamaEmbeddings(model="mxbai-embed-large"
+                              ,base_url="http://ollama:11434")
+#Jer se skripta pokrece direktno iz containera, mora se dodati base url na embeddings i modelu, da bi se pokrenuli iz llama containera, a ne lokalno
 splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
     chunk_overlap=100
 )
 # chunkuje jedan fajl
-def build_documents(paper):
+def build_documents(paper, file_name):
     title = paper["metadata"]["title"]
     paper_id = paper["paper_id"]
 
@@ -40,7 +42,8 @@ def build_documents(paper):
                     metadata={
                         "paper_id": paper_id,
                         "title": title,
-                        "chunk_index": chunk_index
+                        "chunk_index": chunk_index,
+                        "file_name": file_name
                     }
                 )
             )
@@ -54,7 +57,8 @@ def build_documents(paper):
                 metadata={
                     "paper_id": paper_id,
                     "title": title,
-                    "chunk_index": chunk_index
+                    "chunk_index": chunk_index,
+                    "file_name": file_name
                 }
             )
         )
@@ -68,16 +72,23 @@ for file_name in os.listdir(data_path):
     print(i)
     with open(os.path.join(data_path, file_name), "r", encoding="utf-8") as f:
         paper = json.load(f)
-    docs = build_documents(paper)
+    docs = build_documents(paper, file_name)
     docs = splitter.split_documents(docs)
     all_docs.extend(docs)
 
 print('docs len', len(all_docs))
-vector_store=Chroma.from_documents(
-    documents=all_docs,
+vector_store = Chroma(
     collection_name="CORD-19",
-    persist_directory = db_location,
-    embedding=embeddings
+    persist_directory=str(db_location),
+    embedding_function=embeddings
 )
 
+BATCH_SIZE = 2000
 
+for i in range(0, len(all_docs), BATCH_SIZE):
+    print(i)
+    batch = all_docs[i:i + BATCH_SIZE]
+
+    print(f"Inserting batch {i} - {i + len(batch)}")
+
+    vector_store.add_documents(batch)

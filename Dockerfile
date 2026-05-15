@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY API_req.txt .
+COPY RAG_env.txt .
+RUN pip install --no-cache-dir -r RAG_env.txt
 
-RUN pip install --no-cache-dir -r API_req.txt
+COPY API/ ./API
+COPY Agent/ ./Agent
 
-COPY skripte/ ./skripte
 
 EXPOSE 8000
 
-CMD ["uvicorn", "skripte.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "API.scripts.main:app", "--host", "0.0.0.0", "--port", "8000"]
