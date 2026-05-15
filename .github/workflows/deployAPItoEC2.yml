@@ -1,9 +1,14 @@
-name: Deploy to EC2
+name: Deploy API to EC2
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "API/**"
+      - "Agent/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
 
 jobs:
   deploy:
@@ -13,7 +18,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: SSH into EC2 and deploy
+      - name: Deploy API on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -22,8 +27,7 @@ jobs:
           key: ${{ secrets.EC2_SSH }}
           script: |
             cd ~/ML-Test
-
             git pull origin main
 
-            docker compose down
-            docker compose up --build -d
+            docker compose build api
+            docker compose up -d api
