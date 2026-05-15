@@ -1,5 +1,5 @@
 FROM python:3.11.14
-#komentar za probu, EC2 instance running , EC2HOSt = IP adresa
+#komentar za probu, EC2 instance running , EC2HOSt = IP adress
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
