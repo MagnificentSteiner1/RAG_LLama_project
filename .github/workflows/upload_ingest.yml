@@ -1,0 +1,38 @@
+name: Update Dataset + Ingest
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Documents/**"
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Sync documents to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          port: 22
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH }}
+          source: "Documents/*"
+          target: "~/ML-Test/Documents"
+
+      - name: Run ingestion on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          port: 22
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH }}
+          script: |
+            cd ~/ML-Test
+            docker compose up -d api
+            docker exec rag_api python Agent/doc_embed.py
