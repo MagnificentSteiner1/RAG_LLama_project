@@ -1,5 +1,5 @@
 FROM python:3.11.14
-
+#komentar za probu
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
