@@ -1,6 +1,7 @@
 fastapi
 uvicorn[standard]
 pydantic
+gdown
 
 langchain
 langchain-core
@@ -9,6 +10,7 @@ langchain-chroma
 langchain-text-splitters
 
 chromadb
+
 
 langchain-ollama
 ollama

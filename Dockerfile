@@ -15,7 +15,10 @@ RUN pip install --no-cache-dir -r RAG_env.txt
 COPY API/ ./API
 COPY Agent/ ./Agent
 
+COPY scripts/ ./scripts
+COPY startup.sh ./startup.sh
+RUN chmod +x /app/startup.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "API.scripts.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["bash", "startup.sh"]
