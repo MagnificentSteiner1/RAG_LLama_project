@@ -22,42 +22,35 @@ splitter = RecursiveCharacterTextSplitter(
 )
 # chunkuje jedan fajl
 def build_documents(paper, file_name):
+
     title = paper["metadata"]["title"]
     paper_id = paper["paper_id"]
 
-    paragraphs = [p["text"] for p in paper["body_text"] if p["text"].strip()]
+    paragraphs = [
+        p["text"].strip()
+        for p in paper["body_text"]
+        if p["text"].strip()
+    ]
 
     documents = []
-    current_chunk = ""
-    chunk_size = 2000  # char-based proxy
-    chunk_index = 0
 
-    for p in paragraphs:
-        if len(current_chunk) + len(p) < chunk_size:
-            current_chunk += " " + p
-        else:
-            documents.append(
-                Document(
-                    page_content=f"Title: {title}\n\n{current_chunk}",
-                    metadata={
-                        "paper_id": paper_id,
-                        "title": title,
-                        "chunk_index": chunk_index,
-                        "file_name": file_name
-                    }
-                )
-            )
-            current_chunk = p
-            chunk_index += 1
+    paragraphs_per_chunk = 3
 
-    if current_chunk:
+    for chunk_index in range(0, len(paragraphs), paragraphs_per_chunk):
+
+        chunk_paragraphs = paragraphs[
+            chunk_index:chunk_index + paragraphs_per_chunk
+        ]
+
+        chunk_text = "\n\n".join(chunk_paragraphs)
+
         documents.append(
             Document(
-                page_content=f"Title: {title}\n\n{current_chunk}",
+                page_content=f"Title: {title}\n\n{chunk_text}",
                 metadata={
                     "paper_id": paper_id,
                     "title": title,
-                    "chunk_index": chunk_index,
+                    "chunk_index": chunk_index // paragraphs_per_chunk,
                     "file_name": file_name
                 }
             )

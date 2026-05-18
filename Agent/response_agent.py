@@ -7,6 +7,9 @@ If you dont have sufficient information from the context, dont fill the gaps wit
 
 This is the topic in question : {question}
 And here is the relevant dataset : {context}
+
+Synthesize information across multiple context chunks when relevant.
+Prioritize consensus across sources.
 """
 
 prompt = ChatPromptTemplate.from_template(template)
